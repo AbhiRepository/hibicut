@@ -1,12 +1,18 @@
+# -*- coding: utf-8 -*-
+'''
+
+Web script to fetch notices from college notice board of IIIT Bhubaneswar and
+send it to all enrolled student of college 
+
+'''
+import time
+import requests
 from selnium import webdriver
+from bs4 import BeautifulSoup
 from selenium.webdriver.support import ui
 from selenium.webdriver.common.keys import Keys
-import requests
-from bs4 import BeautifulSoup
-import time
 
 path = 'C:\Users\hp\Desktop\chromedriver.exe'
-
 
 def page_is_loaded(driver):
     DVG=driver.find_element_by_tag_name("body")
@@ -14,28 +20,24 @@ def page_is_loaded(driver):
     return DVG != None
 driver = webdriver.Chrome(executable_path = path)
 
+''' 
+    Giving the url of target website i.e Intranet portal of IIIT Bhubaneswar
+    and by passing the email and password to the site and unlocking the captcha 
+    by own algorithm we can get into intranet portal
+'''
+
 driver.get("https://hib.iiit-bh.ac.in/Hibiscus/Login/?client=iiit")
-
 wait = ui.WebDriverWait(driver, 10)
-
-
 wait.until(page_is_loaded)
-
 email_field = driver.find_element_by_name("uid")
-
 email_field.send_keys("-----COLLEGE iD----")
-
 password_field = driver.find_element_by_name("pwd")
 password_field.send_keys("-----YOUR PASSWORD-----")
-
 ans_field = driver.find_element_by_id("txtCaptchaDiv")
 ans = driver.find_element_by_tag_name("span")
+
 s = str(ans.text)
-print(ans_field,s)
 l = len(s)
-
-
-
 
 if l == 5:
   summ = int(s[0]) + int(s[2])
@@ -48,14 +50,15 @@ elif l == 6:
 else:
   summ = int(s[0])*10 + int(s[1]) + int(s[3])*10 + int(s[4]) 
 
-
-
 input_field = driver.find_element_by_id('txtInput')
 input_field.send_keys(summ)
-
 password_field.send_keys(Keys.RETURN)
 
 
+'''
+    Code to handle the frame's and selecting the xPath of the 
+    the very first notice and sending it to the mobile using way2sms api
+'''
 
 driver.get("https://hib.iiit-bh.ac.in/Hibiscus/Start/menu.php")
 print driver.window_handles
@@ -93,12 +96,6 @@ with open('C:\Users\hp\Desktop\mbhishek\official.csv') as csvfile:
 
     for row in readCSV:
         number = row[3]
-        
-        
-
-
-        
-
         if __name__ == "__main__":    
             username = "9938147181"
             passwd = "G3586B"
